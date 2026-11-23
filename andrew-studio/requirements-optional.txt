@@ -1,0 +1,2 @@
+# For optional pitch_shift and time_stretch only.
+librosa>=0.10

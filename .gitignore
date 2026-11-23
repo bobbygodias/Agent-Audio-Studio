@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.wav
+*.flac
+*.aiff
+*.mp3
+*.m4a
+*.ogg
+*.report.json
+dist/

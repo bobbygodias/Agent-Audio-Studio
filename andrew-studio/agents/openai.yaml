@@ -1,0 +1,6 @@
+interface:
+  display_name: "Andrew Studio"
+  short_description: "Mix, process, and shape audio with code"
+  default_prompt: "Use Andrew Studio to inspect this audio, understand my target sound, and build a reversible processing chain with an A/B preview."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+{
+  "chain": [
+    {"effect": "highpass", "parameters": {"hz": 35}},
+    {"effect": "peak_eq", "parameters": {"hz": 310, "q": 1.0, "gain_db": -1.5}, "bypass": true},
+    {"effect": "compressor", "parameters": {"threshold_db": -20, "ratio": 2.5, "attack_ms": 18, "release_ms": 110, "makeup_db": 0}},
+    {"effect": "saturator", "parameters": {"drive_db": 3, "output": 0.9}}
+  ]
+}

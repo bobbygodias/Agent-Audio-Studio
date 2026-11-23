@@ -1,0 +1,10 @@
+{
+  "sample_rate_hz": 48000,
+  "stems": [
+    {"name": "vocal", "path": "vocal.wav", "gain_db": 0, "pan": 0, "start_seconds": 0, "polarity_invert": false,
+     "chain": [{"effect": "highpass", "parameters": {"hz": 75}}]},
+    {"name": "guitar-left", "path": "guitar-left.wav", "gain_db": -2, "pan": -0.65, "start_seconds": 0},
+    {"name": "guitar-right", "path": "guitar-right.wav", "gain_db": -2, "pan": 0.65, "start_seconds": 0},
+    {"name": "bass", "path": "bass.wav", "gain_db": -1, "pan": 0, "start_seconds": 0}
+  ]
+}
