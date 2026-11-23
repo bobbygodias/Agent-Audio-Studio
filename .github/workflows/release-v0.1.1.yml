@@ -1,0 +1,74 @@
+name: Publish Agent Audio Studio v0.1.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/release-v0.1.1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-audio-studio-release-v0.1.1
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate package structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f andrew-studio/SKILL.md
+          test -f andrew-studio/LICENSE
+          test -f andrew-studio/README.md
+          test -f andrew-studio/scripts/studio_dsp.py
+          test -f andrew-studio/tests/test_studio_dsp.py
+          test -f RELEASE_NOTES.md
+
+      - name: Package portable ZIP and checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          git archive --format=zip --prefix=andrew-studio/ --output=dist/Agent-Audio-Studio-v0.1.1.zip HEAD:andrew-studio
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          archive = 'dist/Agent-Audio-Studio-v0.1.1.zip'
+          with ZipFile(archive) as z:
+              entries = z.namelist()
+              assert z.testzip() is None
+              assert 'andrew-studio/SKILL.md' in entries
+              assert 'andrew-studio/scripts/studio_dsp.py' in entries
+              assert 'andrew-studio/tests/test_studio_dsp.py' in entries
+              assert not any('__pycache__' in name or name.endswith('.pyc') for name in entries)
+              print(f'Validated {len(entries)} ZIP entries')
+          PY
+          cd dist
+          sha256sum Agent-Audio-Studio-v0.1.1.zip > Agent-Audio-Studio-v0.1.1.zip.sha256
+
+      - name: Publish GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view v0.1.1 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release v0.1.1 already exists; preserving it."
+            exit 0
+          fi
+          gh release create v0.1.1 \
+            dist/Agent-Audio-Studio-v0.1.1.zip \
+            dist/Agent-Audio-Studio-v0.1.1.zip.sha256 \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Agent Audio Studio v0.1.1" \
+            --notes-file RELEASE_NOTES.md
