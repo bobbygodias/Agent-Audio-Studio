@@ -4,6 +4,7 @@ description: Produce, edit, mix, and master audio with a conversational, code-dr
 license: MIT
 metadata:
   author: Bobby Dias & Andrew Vox
+  effects_contributor: Nilo (Codex)
   version: "0.1.1"
 ---
 
