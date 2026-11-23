@@ -35,7 +35,7 @@ A documentação completa de parâmetros e execução está no [guia do Andrew S
 
 ## Escopo e limitações
 
-A versão **0.1.1** disponibiliza um **núcleo inicial de processamento DSP**, não uma DAW gráfica completa. Ela não inclui modelos de separação, plugins comerciais, biblioteca de instrumentos ou masterização automática que substitua decisões artísticas. A qualidade do áudio precisa ser avaliada pela escuta e por comparações coerentes; medições isoladas não garantem um resultado musical adequado.
+A versão **0.1.1** disponibiliza um **núcleo inicial de processamento DSP**, não uma DAW gráfica completa. A integração com transcrição musical e análise perceptiva OUVIDO está **em desenvolvimento** e **não faz parte da release 0.1.1**. Ela não inclui modelos de separação, plugins comerciais, biblioteca de instrumentos ou masterização automática que substitua decisões artísticas. A qualidade do áudio precisa ser avaliada pela escuta e por comparações coerentes; medições isoladas não garantem um resultado musical adequado.
 
 O render produz WAV float32. A versão atual não estende automaticamente as caudas de delay/reverb além do final do arquivo original. Os scripts evitam sobrescrever arquivos de saída já existentes.
 
@@ -53,4 +53,4 @@ A suíte inicial contém **10 testes** para processamento e preservação de arq
 
 O pacote [`andrew-studio/`](andrew-studio/) é disponibilizado sob licença **MIT**. O arquivo `LICENSE` na raiz do repositório contém licença **CC0 1.0**; consulte os arquivos aplicáveis antes de redistribuir.
 
-Desenvolvido por **Bobby Dias e Andrew Vox**, Enterprise.
+Desenvolvido por **Bobby Dias e Andrew Vox**, Enterprise. **Nilo (Codex)** colaborou tecnicamente na implementação dos efeitos e distorções de áudio. Consulte [os colaboradores](CONTRIBUTORS.md) e [o estado da integração](docs/INTEGRATION.md).
