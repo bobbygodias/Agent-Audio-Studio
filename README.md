@@ -53,4 +53,4 @@ A suíte inicial contém **10 testes** para processamento e preservação de arq
 
 O pacote [`andrew-studio/`](andrew-studio/) é disponibilizado sob licença **MIT**. O arquivo `LICENSE` na raiz do repositório contém licença **CC0 1.0**; consulte os arquivos aplicáveis antes de redistribuir.
 
-Desenvolvido por **Bobby Dias e Andrew Vox**, Enterprise. **Nilo (Codex)** colaborou tecnicamente na implementação dos efeitos e distorções de áudio. Consulte [os colaboradores](CONTRIBUTORS.md) e [o estado da integração](docs/INTEGRATION.md).
+Desenvolvido por **Bobby Dias e Andrew Vox**, Enterprise. **Nilo** colaborou tecnicamente na implementação dos efeitos e distorções de áudio. Consulte [os colaboradores](CONTRIBUTORS.md) e [o estado da integração](docs/INTEGRATION.md).
