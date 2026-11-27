@@ -3,6 +3,8 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 import soundfile as sf
@@ -110,6 +112,31 @@ class StudioDSPTests(unittest.TestCase):
             self.assertEqual(report["source_preserved"], True)
             with self.assertRaises(ValueError):
                 dsp.render(source, recipe, source)
+
+    def test_mix_rejects_oversized_sources_before_reading_samples(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source, recipe, output = root/"stem.wav", root/"mix.json", root/"mix.wav"
+            sf.write(source, self.audio[:100], self.sr)
+            recipe.write_text(json.dumps({"stems": [{"path": str(source)}]}), encoding="utf-8")
+            info = SimpleNamespace(frames=60_000_001, samplerate=self.sr, channels=1)
+            with patch.object(dsp.sf, "info", return_value=info):
+                with patch.object(dsp.sf, "read", side_effect=AssertionError("Too late: samples read")):
+                    with self.assertRaisesRegex(ValueError, "limite de memória"):
+                        dsp.mix_stems(recipe, output, target_sr=self.sr)
+            self.assertFalse(output.exists())
+
+    def test_mix_rejects_excessive_offsets_and_nonfinite_offsets_before_read(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source, recipe, output = root/"stem.wav", root/"mix.json", root/"mix.wav"
+            sf.write(source, self.audio[:100], self.sr)
+            for offset, expected in [(3000, "limite de memória"), (float("inf"), "deve ser finito")]:
+                recipe.write_text(json.dumps({"stems": [{"path": str(source), "start_seconds": offset}]}), encoding="utf-8")
+                with patch.object(dsp.sf, "read", side_effect=AssertionError("Too late: samples read")):
+                    with self.assertRaisesRegex(ValueError, expected):
+                        dsp.mix_stems(recipe, output, target_sr=self.sr)
+            self.assertFalse(output.exists())
 
     def test_stem_mix_aligns_offset_and_protects_inputs(self):
         with tempfile.TemporaryDirectory() as tmp:
