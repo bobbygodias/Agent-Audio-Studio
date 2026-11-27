@@ -302,8 +302,26 @@ def mix_stems(recipe_path: Path, output_path: Path, target_sr: int | None = None
     sr = int(target_sr or recipe.get("sample_rate_hz") or sf.info(paths[0]).samplerate)
     if sr < 8000 or sr > 192000:
         raise ValueError("sample_rate_hz deve ficar entre 8000 e 192000.")
-    loaded, end_frame = [], 0
+    # Predict the mix allocation before loading any stem. Previously the limit
+    # was checked only after sf.read/resample, when memory was already spent.
+    preflight, projected_end, projected_loaded = [], 0, 0
     for item, path in zip(stems, paths):
+        info = sf.info(path)
+        if info.channels not in (1, 2) or info.frames < 1 or info.samplerate < 1:
+            raise ValueError(f"{path.name}: stem vazio ou formato de canais inválido.")
+        offset = float(item.get("start_seconds", 0))
+        if not math.isfinite(offset):
+            raise ValueError("Deslocamento do stem deve ser finito.")
+        start = max(0, round(offset * sr))
+        expected_frames = (int(info.frames) * sr + int(info.samplerate) - 1) // int(info.samplerate)
+        projected_end = max(projected_end, start + expected_frames)
+        projected_loaded += expected_frames * 2  # Mono is expanded to stereo.
+        if projected_end * 2 > 120_000_000 or projected_loaded > 120_000_000:
+            raise ValueError("Mix excede o limite de memória configurado.")
+        preflight.append((item, path, start))
+
+    loaded, end_frame = [], 0
+    for item, path, start in preflight:
         audio, source_sr = sf.read(path, dtype="float32", always_2d=True)
         if audio.shape[1] > 2:
             raise ValueError(f"{path.name}: somente stems mono/estéreo são aceitos.")
@@ -330,7 +348,6 @@ def mix_stems(recipe_path: Path, output_path: Path, target_sr: int | None = None
         if item.get("polarity_invert", False):
             audio *= -1
         audio *= gain
-        start = max(0, round(float(item.get("start_seconds", 0))*sr))
         end_frame = max(end_frame, start+len(audio))
         loaded.append((item.get("name", path.stem), audio, start, path))
     if end_frame * 2 > 120_000_000:
