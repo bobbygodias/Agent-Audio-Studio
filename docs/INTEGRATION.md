@@ -19,3 +19,7 @@ Os módulos em desenvolvimento têm dependências e limitações independentes; 
 - O projeto independente **Lua — Partitura e MIDI** permanece deliberadamente fora da integração. Geração de partituras poderá ser pesquisada como funcionalidade futura sem importar esse projeto.
 
 A documentação aqui descreve o **objetivo de desenvolvimento**, não uma declaração de funcionalidade já validada.
+
+## Experimental acoustic evidence — 28/11/2026
+
+Run `python andrew-studio/scripts/timed_evidence.py audio.wav --window-seconds 1 --lyrics-json cues.json` to produce time-aligned acoustic measurements and optional user-supplied lyric cues. Cue records use start_seconds, end_seconds, and text. Audio is streamed in bounded blocks; source files are not changed. The implementation is original and does not import OUVIDO code of uncertain licensing. It is a measurement layer, not automated artistic-intention analysis or lyric transcription. CI and real recording evaluation remain required.
